@@ -11,10 +11,11 @@
  *******************************************************************************/
 package com.maxprograms.xml;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
@@ -34,11 +35,11 @@ public class Document implements XMLNode {
 	private Map<String, String> entities;
 	private List<AttributeDecl> attributeDeclarations;
 
-	private static Logger logger = System.getLogger(Document.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(Document.class);
 
 	@Override
 	public short getNodeType() {
-		return XMLNode.DOCUMENT_NODE;
+		return DOCUMENT_NODE;
 	}
 
 	public Document(String namespaceURI, String qualifiedName, String publicId, String systemId) {
@@ -80,18 +81,18 @@ public class Document implements XMLNode {
 			while (it.hasNext()) {
 				XMLNode node = it.next();
 				switch (node.getNodeType()) {
-					case XMLNode.PROCESSING_INSTRUCTION_NODE:
+					case PROCESSING_INSTRUCTION_NODE:
 						content.add(new PI(((PI) node).getTarget(), ((PI) node).getData()));
 						break;
-					case XMLNode.COMMENT_NODE:
+					case COMMENT_NODE:
 						content.add(new Comment(((Comment) node).getText()));
 						break;
-					case XMLNode.TEXT_NODE:
+					case TEXT_NODE:
 						content.add(new TextNode(((TextNode) node).getText()));
 						break;
 					default:
 						// should never happen
-						logger.log(Level.WARNING, Messages.getString("Document.0"));
+						logger.warn(Messages.getString("Document.0"));
 				}
 			}
 		}
@@ -114,7 +115,7 @@ public class Document implements XMLNode {
 	public void setRootElement(Element e) {
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode node = content.get(i);
-			if (node.getNodeType() == XMLNode.ELEMENT_NODE) {
+			if (node.getNodeType() == ELEMENT_NODE) {
 				root = e;
 				content.set(i, e);
 			}
@@ -155,7 +156,7 @@ public class Document implements XMLNode {
 		List<PI> result = new Vector<>();
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode n = content.get(i);
-			if (n.getNodeType() == XMLNode.PROCESSING_INSTRUCTION_NODE) {
+			if (n.getNodeType() == PROCESSING_INSTRUCTION_NODE) {
 				result.add((PI) n);
 			}
 		}
@@ -166,7 +167,7 @@ public class Document implements XMLNode {
 		List<PI> result = new Vector<>();
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode n = content.get(i);
-			if (n.getNodeType() == XMLNode.PROCESSING_INSTRUCTION_NODE && ((PI) n).getTarget().equals(target)) {
+			if (n.getNodeType() == PROCESSING_INSTRUCTION_NODE && ((PI) n).getTarget().equals(target)) {
 				result.add((PI) n);
 			}
 		}
@@ -176,7 +177,7 @@ public class Document implements XMLNode {
 	public void removePI(String target) {
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode node = content.get(i);
-			if (node.getNodeType() == XMLNode.PROCESSING_INSTRUCTION_NODE && ((PI) node).getTarget().equals(target)) {
+			if (node.getNodeType() == PROCESSING_INSTRUCTION_NODE && ((PI) node).getTarget().equals(target)) {
 				content.remove(node);
 			}
 		}
@@ -185,7 +186,7 @@ public class Document implements XMLNode {
 	public void removeAllPI() {
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode node = content.get(i);
-			if (node.getNodeType() == XMLNode.PROCESSING_INSTRUCTION_NODE) {
+			if (node.getNodeType() == PROCESSING_INSTRUCTION_NODE) {
 				content.remove(node);
 			}
 		}
@@ -256,15 +257,15 @@ public class Document implements XMLNode {
 		while (it.hasNext()) {
 			XMLNode node = it.next();
 			switch (node.getNodeType()) {
-				case XMLNode.PROCESSING_INSTRUCTION_NODE:
+				case PROCESSING_INSTRUCTION_NODE:
 					content.add(content.size() - 1, new PI(((PI) node).getTarget(), ((PI) node).getData()));
 					break;
-				case XMLNode.COMMENT_NODE:
+				case COMMENT_NODE:
 					content.add(content.size() - 1, new Comment(((Comment) node).getText()));
 					break;
 				default:
 					// should never happen
-					logger.log(Level.WARNING, Messages.getString("Document.0"));
+					logger.warn(Messages.getString("Document.0"));
 			}
 		}
 	}

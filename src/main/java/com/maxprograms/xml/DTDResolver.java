@@ -11,14 +11,14 @@
  *******************************************************************************/
 package com.maxprograms.xml;
 
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
 
 public class DTDResolver implements EntityResolver {
 

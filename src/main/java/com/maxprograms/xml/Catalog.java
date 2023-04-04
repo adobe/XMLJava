@@ -11,14 +11,20 @@
  *******************************************************************************/
 package com.maxprograms.xml;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.ext.EntityResolver2;
+
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -27,12 +33,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.ext.EntityResolver2;
 
 public class Catalog implements EntityResolver2 {
 
@@ -446,15 +446,15 @@ public class Catalog implements EntityResolver2 {
                 Iterator<EntityDecl> it = entities.iterator();
                 while (it.hasNext()) {
                     EntityDecl entity = it.next();
-                    String path = XMLUtils.getAbsolutePath(dtdFile.getParentFile().getAbsolutePath(),
+                    String path = XMLUtils.getAbsolutePath(Paths.get(entity.getDefiningFileAbsolutePath()).getParent().toString(),
                             entity.getValue());
                     addDtdEntity(entity.getPublicId(), path);
                 }
             } catch (IOException | SAXException e) {
                 // do nothing
-                Logger logger = System.getLogger(Catalog.class.getName());
+                Logger logger = LoggerFactory.getLogger(Catalog.class);
                 MessageFormat mf = new MessageFormat(Messages.getString("Catalog.0"));
-                logger.log(Level.WARNING, mf.format(new String[] { publicId }));
+                logger.warn(mf.format(new String[] { publicId }));
             }
             parsedDTDs.add(dtd);
         }

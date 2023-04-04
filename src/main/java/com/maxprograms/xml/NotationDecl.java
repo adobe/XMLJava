@@ -70,7 +70,7 @@ public class NotationDecl implements XMLNode {
 
     @Override
     public short getNodeType() {
-        return XMLNode.NOTATION_DECL_NODE;
+        return NOTATION_DECL_NODE;
     }
 
     @Override

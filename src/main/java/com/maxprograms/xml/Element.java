@@ -11,10 +11,11 @@
  *******************************************************************************/
 package com.maxprograms.xml;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -32,7 +33,7 @@ public class Element implements XMLNode {
 	private List<XMLNode> content;
 	private Map<String, Attribute> attsTable;
 
-	private static Logger logger = System.getLogger(Element.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(Element.class);
 
 	public Element() {
 		name = "";
@@ -90,26 +91,26 @@ public class Element implements XMLNode {
 		while (ic.hasNext()) {
 			XMLNode node = ic.next();
 			switch (node.getNodeType()) {
-				case XMLNode.TEXT_NODE:
+				case TEXT_NODE:
 					content.add(new TextNode(((TextNode) node).getText()));
 					break;
-				case XMLNode.ELEMENT_NODE:
+				case ELEMENT_NODE:
 					Element e = new Element();
 					e.clone((Element) node);
 					content.add(e);
 					break;
-				case XMLNode.PROCESSING_INSTRUCTION_NODE:
+				case PROCESSING_INSTRUCTION_NODE:
 					content.add(new PI(((PI) node).getTarget(), ((PI) node).getData()));
 					break;
-				case XMLNode.COMMENT_NODE:
+				case COMMENT_NODE:
 					content.add(new Comment(((Comment) node).getText()));
 					break;
-				case XMLNode.CDATA_SECTION_NODE:
+				case CDATA_SECTION_NODE:
 					content.add(new CData(((CData) node).getData()));
 					break;
 				default:
 					// should never happen
-					logger.log(Level.WARNING, Messages.getString("Element.0"));
+					logger.warn(Messages.getString("Element.0"));
 			}
 		}
 	}
@@ -157,12 +158,12 @@ public class Element implements XMLNode {
 				// should not happen!
 				continue;
 			}
-			if (n.getNodeType() == XMLNode.TEXT_NODE && !newContent.isEmpty()) {
-				if (newContent.get(newContent.size() - 1).getNodeType() == XMLNode.TEXT_NODE) {
+			if (n.getNodeType() == TEXT_NODE && !newContent.isEmpty()) {
+				if (newContent.get(newContent.size() - 1).getNodeType() == TEXT_NODE) {
 					TextNode t = (TextNode) newContent.get(newContent.size() - 1);
 					StringBuilder buffer = new StringBuilder(t.getText());
 					buffer.append(((TextNode) n).getText());
-					while (i < content.size() - 1 && content.get(i + 1).getNodeType() == XMLNode.TEXT_NODE) {
+					while (i < content.size() - 1 && content.get(i + 1).getNodeType() == TEXT_NODE) {
 						XMLNode next = content.get(i + 1);
 						buffer.append(((TextNode) next).getText());
 						i++;
@@ -205,7 +206,7 @@ public class Element implements XMLNode {
 	public Element getChild(String tagName) {
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode node = content.get(i);
-			if (node.getNodeType() == XMLNode.ELEMENT_NODE && ((Element) node).getName().equals(tagName)) {
+			if (node.getNodeType() == ELEMENT_NODE && ((Element) node).getName().equals(tagName)) {
 				return (Element) node;
 			}
 		}
@@ -216,7 +217,7 @@ public class Element implements XMLNode {
 		List<Element> result = new Vector<>();
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode node = content.get(i);
-			if (node.getNodeType() == XMLNode.ELEMENT_NODE) {
+			if (node.getNodeType() == ELEMENT_NODE) {
 				result.add((Element) node);
 			}
 		}
@@ -227,7 +228,7 @@ public class Element implements XMLNode {
 		List<Element> result = new Vector<>();
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode node = content.get(i);
-			if (node.getNodeType() == XMLNode.ELEMENT_NODE && ((Element) node).getName().equals(tagname)) {
+			if (node.getNodeType() == ELEMENT_NODE && ((Element) node).getName().equals(tagname)) {
 				result.add((Element) node);
 			}
 		}
@@ -259,17 +260,17 @@ public class Element implements XMLNode {
 
 	@Override
 	public short getNodeType() {
-		return XMLNode.ELEMENT_NODE;
+		return ELEMENT_NODE;
 	}
 
 	public String getText() {
 		StringBuilder result = new StringBuilder("");
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode node = content.get(i);
-			if (node.getNodeType() == XMLNode.TEXT_NODE) {
+			if (node.getNodeType() == TEXT_NODE) {
 				result.append(((TextNode) node).getText());
 			}
-			if (node.getNodeType() == XMLNode.ELEMENT_NODE) {
+			if (node.getNodeType() == ELEMENT_NODE) {
 				result.append(((Element) node).getText());
 			}
 		}
@@ -289,7 +290,7 @@ public class Element implements XMLNode {
 	public void removeChild(String string) {
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode node = content.get(i);
-			if (node.getNodeType() == XMLNode.ELEMENT_NODE && ((Element) node).getName().equals(string)) {
+			if (node.getNodeType() == ELEMENT_NODE && ((Element) node).getName().equals(string)) {
 				content.remove(node);
 			}
 		}
@@ -298,7 +299,7 @@ public class Element implements XMLNode {
 	public void removeChild(Element child) {
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode node = content.get(i);
-			if (node.getNodeType() == XMLNode.ELEMENT_NODE && ((Element) node).equals(child)) {
+			if (node.getNodeType() == ELEMENT_NODE && ((Element) node).equals(child)) {
 				content.remove(node);
 				return;
 			}
@@ -353,7 +354,7 @@ public class Element implements XMLNode {
 		List<PI> result = new Vector<>();
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode n = content.get(i);
-			if (n.getNodeType() == XMLNode.PROCESSING_INSTRUCTION_NODE) {
+			if (n.getNodeType() == PROCESSING_INSTRUCTION_NODE) {
 				result.add((PI) n);
 			}
 		}
@@ -364,7 +365,7 @@ public class Element implements XMLNode {
 		List<PI> result = new Vector<>();
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode n = content.get(i);
-			if (n.getNodeType() == XMLNode.PROCESSING_INSTRUCTION_NODE && ((PI) n).getTarget().equals(target)) {
+			if (n.getNodeType() == PROCESSING_INSTRUCTION_NODE && ((PI) n).getTarget().equals(target)) {
 				result.add((PI) n);
 			}
 		}
@@ -374,7 +375,7 @@ public class Element implements XMLNode {
 	public void removePI(String string) {
 		for (int i = 0; i < content.size(); i++) {
 			XMLNode node = content.get(i);
-			if (node.getNodeType() == XMLNode.PROCESSING_INSTRUCTION_NODE && ((PI) node).getTarget().equals(string)) {
+			if (node.getNodeType() == PROCESSING_INSTRUCTION_NODE && ((PI) node).getTarget().equals(string)) {
 				content.remove(node);
 			}
 		}

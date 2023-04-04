@@ -11,21 +11,22 @@
  *******************************************************************************/
 package com.maxprograms.xml;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.xml.sax.SAXException;
-
 public class DTDParser {
 
-    private static Logger logger = System.getLogger(DTDParser.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(DTDParser.class);
 
     private Map<String, ElementDecl> elementDeclMap;
     private Map<String, AttlistDecl> attributeListMap;
@@ -43,6 +44,7 @@ public class DTDParser {
 
     public Grammar parse(File file) throws SAXException, IOException {
         String source = readFile(file);
+        String sourceAbsolutePath = file.getAbsolutePath();
         int pointer = 0;
         while (pointer < source.length()) {
             if (lookingAt("%", source, pointer)) {
@@ -58,7 +60,7 @@ public class DTDParser {
                 }
                 EntityDecl entity = entitiesMap.get(entityName);
                 String module = entity.getValue();
-                if (module == null || module.isBlank()) {
+                if (module == null || StringUtils.isBlank(module)) {
                     MessageFormat mf = new MessageFormat(Messages.getString("DTDParser.2"));
                     throw new IOException(mf.format(new String[] { entityName }));
                 }
@@ -69,7 +71,7 @@ public class DTDParser {
                 } else {
                     if (debug) {
                         MessageFormat mf = new MessageFormat(Messages.getString("DTDParser.3"));
-                        logger.log(Level.WARNING, mf.format(new String[] { mod.getAbsolutePath() }));
+                        logger.warn(mf.format(new String[] { mod.getAbsolutePath() }));
                     }
                 }
                 pointer += "%".length() + entityName.length() + ";".length();
@@ -102,13 +104,13 @@ public class DTDParser {
                     throw new SAXException(Messages.getString("DTDParser.6"));
                 }
                 String entityDeclText = source.substring(pointer, index + ">".length());
-                EntityDecl entityDecl = new EntityDecl(entityDeclText);
+                EntityDecl entityDecl = new EntityDecl(entityDeclText, sourceAbsolutePath);
                 if (!entitiesMap.containsKey(entityDecl.getName())) {
                     entitiesMap.put(entityDecl.getName(), entityDecl);
                 } else {
                     if (debug) {
                         MessageFormat mf = new MessageFormat(Messages.getString("DTDParser.7"));
-                        logger.log(Level.WARNING, mf.format(new String[] { entityDecl.getName() }));
+                        logger.warn(mf.format(new String[] { entityDecl.getName() }));
                     }
                 }
                 pointer += entityDeclText.length();
@@ -183,9 +185,9 @@ public class DTDParser {
                     continue;
                 }
                 MessageFormat before = new MessageFormat(Messages.getString("DTDParser.12"));
-                logger.log(Level.ERROR, before.format(new String[] { source.substring(pointer - 20, pointer) }));
+                logger.error( before.format(new String[] { source.substring(pointer - 20, pointer) }));
                 MessageFormat after = new MessageFormat(Messages.getString("DTDParser.13"));
-                logger.log(Level.ERROR, after.format(new String[] { source.substring(pointer, pointer + 20) }));
+                logger.error( after.format(new String[] { source.substring(pointer, pointer + 20) }));
                 MessageFormat mf = new MessageFormat(Messages.getString("DTDParser.14"));
                 throw new SAXException(mf.format(new String[] { file.getAbsolutePath() }));
             }
@@ -251,7 +253,7 @@ public class DTDParser {
             try (BufferedReader buffer = new BufferedReader(reader)) {
                 String line = "";
                 while ((line = buffer.readLine()) != null) {
-                    if (!builder.isEmpty()) {
+                    if (StringUtils.isNotEmpty(builder)) {
                         builder.append('\n');
                     }
                     builder.append(line);

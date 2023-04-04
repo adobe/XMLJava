@@ -11,10 +11,11 @@
  *******************************************************************************/
 package com.maxprograms.xml;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
@@ -26,14 +27,14 @@ import java.util.Set;
 public class XMLOutputter {
 
 	private Charset defaultEncoding = StandardCharsets.UTF_8;
-	private boolean preserve = false;
+	private boolean preserve = true;
 	private Map<String, String> entities = null;
 	private boolean escape = false;
 	private boolean emptyDoctype = false;
 	private boolean skipLinefeed;
 	private boolean writeBOM;
 
-	private static Logger logger = System.getLogger(XMLOutputter.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(XMLOutputter.class);
 
 	public void output(Document sdoc, OutputStream output) throws IOException {
 		if (defaultEncoding.equals(StandardCharsets.UTF_16LE)) {
@@ -135,7 +136,7 @@ public class XMLOutputter {
 					break;
 				default:
 					// should never happen
-					logger.log(Level.WARNING, Messages.getString("XMLOutputter.0"));
+					logger.warn(Messages.getString("XMLOutputter.0"));
 			}
 		}
 	}
@@ -195,7 +196,7 @@ public class XMLOutputter {
 						break;
 					default:
 						// should never happen
-						logger.log(Level.WARNING, Messages.getString("XMLOutputter.1"));
+						logger.warn(Messages.getString("XMLOutputter.1"));
 				}
 			}
 			if (!preserve) {

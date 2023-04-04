@@ -11,6 +11,11 @@
  *******************************************************************************/
 package com.maxprograms.xml;
 
+import org.apache.commons.lang3.StringUtils;
+import org.xml.sax.SAXException;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -22,11 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
 
 public class RelaxNGParser {
 
@@ -194,7 +194,7 @@ public class RelaxNGParser {
             XMLNode node = it.next();
             if (node.getNodeType() == XMLNode.TEXT_NODE) {
                 TextNode text = (TextNode) node;
-                if (!text.toString().isBlank()) {
+                if (StringUtils.isNotBlank(text.toString())) {
                     newContent.add(node);
                 }
             }
@@ -235,7 +235,7 @@ public class RelaxNGParser {
             XMLNode node = it.next();
             if (node.getNodeType() == XMLNode.TEXT_NODE) {
                 TextNode text = (TextNode) node;
-                if (!text.toString().isBlank()) {
+                if (StringUtils.isNotBlank(text.toString())) {
                     newContent.add(node);
                 }
             }

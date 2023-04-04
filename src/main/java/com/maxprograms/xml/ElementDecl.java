@@ -43,7 +43,7 @@ public class ElementDecl implements XMLNode {
 
     @Override
     public short getNodeType() {
-        return XMLNode.ELEMENT_DECL_NODE;
+        return ELEMENT_DECL_NODE;
     }
 
     @Override

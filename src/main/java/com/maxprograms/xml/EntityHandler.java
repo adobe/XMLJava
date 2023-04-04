@@ -11,13 +11,13 @@
  *******************************************************************************/
 package com.maxprograms.xml;
 
+import org.xml.sax.SAXException;
+import org.xml.sax.ext.DefaultHandler2;
+
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
-import org.xml.sax.SAXException;
-import org.xml.sax.ext.DefaultHandler2;
 
 public class EntityHandler extends DefaultHandler2 {
 

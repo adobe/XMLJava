@@ -15,42 +15,27 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-public class PI implements XMLNode {
+public class CData implements XMLNode {
 
-	private static final long serialVersionUID = -689697302415200547L;
-	private String target;
-	private String data;
+	private static final long serialVersionUID = 610927332260249086L;
+	private String value;
 
-	public PI(String target, String data) {
-		this.target = target;
-		this.data = data;
-	}
-
-	public String getTarget() {
-		return target;
+	public CData(String data) {
+		value = data;
 	}
 
 	public String getData() {
-		return data;
-	}
-
-	public void setData(String value) {
-		data = value;
+		return value;
 	}
 
 	@Override
 	public String toString() {
-		return "<?" + target + " " + data + "?>";
-	}
-
-	@Override
-	public void writeBytes(OutputStream output, Charset charset) throws IOException {
-		output.write(toString().getBytes(charset));
+		return "<![CDATA[" + value + "]]>";
 	}
 
 	@Override
 	public short getNodeType() {
-		return XMLNode.PROCESSING_INSTRUCTION_NODE;
+		return CDATA_SECTION_NODE;
 	}
 
 	@Override
@@ -58,11 +43,16 @@ public class PI implements XMLNode {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof PI)) {
+		if (!(obj instanceof CData)) {
 			return false;
 		}
-		PI pi = (PI) obj;
-		return target.equals(pi.getTarget()) && data.equals(pi.getData());
+		CData cd = (CData) obj;
+		return value.equals(cd.getData());
+	}
+
+	@Override
+	public void writeBytes(OutputStream output, Charset charset) throws IOException {
+		output.write(toString().getBytes(charset));
 	}
 
 	@Override

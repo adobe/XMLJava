@@ -47,7 +47,7 @@ public class Attribute implements XMLNode, Comparable<Attribute> {
 
 	@Override
 	public short getNodeType() {
-		return XMLNode.ATTRIBUTE_NODE;
+		return ATTRIBUTE_NODE;
 	}
 
 	public void setValue(String string) {

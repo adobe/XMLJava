@@ -11,6 +11,14 @@
  *******************************************************************************/
 package com.maxprograms.xml;
 
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -18,22 +26,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.EntityResolver;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 public class SAXBuilder {
 
@@ -54,8 +52,7 @@ public class SAXBuilder {
 	public Document build(String filename) throws SAXException, IOException, ParserConfigurationException {
 		File f = new File(filename);
 		if (!f.exists()) {
-			MessageFormat mf = new MessageFormat(Messages.getString("SAXBuilder.1"));
-			throw new IOException(mf.format(new String[] { filename }));
+			throw new IOException("Exception while finding filename : " + filename);
 		}
 		return build(f.toURI().toURL());
 	}
@@ -66,8 +63,7 @@ public class SAXBuilder {
 
 	public Document build(File file) throws SAXException, IOException, ParserConfigurationException {
 		if (!file.exists()) {
-			MessageFormat mf = new MessageFormat(Messages.getString("SAXBuilder.1"));
-			throw new IOException(mf.format(new String[] { file.getAbsolutePath() }));
+			throw new IOException("Exception while finding filename : " + file.getName());
 		}
 		return build(file.toURI().toURL());
 	}
@@ -130,13 +126,13 @@ public class SAXBuilder {
 	}
 
 	public Document build(URL url) throws SAXException, IOException, ParserConfigurationException {
-		if ("file".equals(url.getProtocol()) && resolver instanceof Catalog catalog) {
+		if ("file".equals(url.getProtocol()) && resolver instanceof Catalog) {
 			File f = new File(url.toString());
 			String parent = f.getParentFile().getAbsolutePath();
 			if (parent.lastIndexOf("file:") != -1) {
 				parent = parent.substring(parent.lastIndexOf("file:") + 5);
 			}
-			catalog.currentDocumentBase(parent);
+			((Catalog) resolver).currentDocumentBase(parent);
 		}
 		XMLReader parser = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 		parser.setFeature("http://xml.org/sax/features/namespaces", true);
@@ -148,8 +144,8 @@ public class SAXBuilder {
 		boolean clearHandler = false;
 		if (contentHandler == null) {
 			contentHandler = new CustomContentHandler();
-			if (resolver instanceof Catalog catalog) {
-				contentHandler.setCatalog(catalog);
+			if (resolver instanceof Catalog) {
+				contentHandler.setCatalog((Catalog) resolver);
 			}
 			clearHandler = true;
 		}

@@ -68,7 +68,7 @@ public class AttributeDecl implements XMLNode, Comparable<AttributeDecl> {
 
     @Override
     public short getNodeType() {
-        return XMLNode.ATTRIBUTE_DECL_NODE;
+        return ATTRIBUTE_DECL_NODE;
     }
 
     @Override
@@ -83,8 +83,8 @@ public class AttributeDecl implements XMLNode, Comparable<AttributeDecl> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof AttributeDecl other) {
-          return toString().equals(other.toString());
+        if (obj instanceof AttributeDecl) {
+          return toString().equals(obj.toString());
         }
         return false;
     }

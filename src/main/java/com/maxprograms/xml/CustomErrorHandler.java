@@ -11,25 +11,24 @@
  *******************************************************************************/
 package com.maxprograms.xml;
 
-import java.lang.System.Logger.Level;
-import java.lang.System.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+
 public class CustomErrorHandler implements org.xml.sax.ErrorHandler {
 
-	private static Logger logger = System.getLogger(CustomErrorHandler.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(CustomErrorHandler.class);
 
 	@Override
 	public void warning(SAXParseException exception) throws SAXException {
-		logger.log(Level.WARNING,
-				exception.getLineNumber() + ":" + exception.getColumnNumber() + " " + exception.getMessage());
+		logger.warn(exception.getLineNumber() + ":" + exception.getColumnNumber() + " " + exception.getMessage());
 	}
 
 	@Override
 	public void error(SAXParseException exception) throws SAXException {
-		logger.log(Level.ERROR,
+		logger.error(
 				exception.getLineNumber() + ":" + exception.getColumnNumber() + " " + exception.getMessage());
 		throw new SAXException("[Error] " + exception.getLineNumber() + ":" + exception.getColumnNumber() + " "
 				+ exception.getMessage());
@@ -37,7 +36,7 @@ public class CustomErrorHandler implements org.xml.sax.ErrorHandler {
 
 	@Override
 	public void fatalError(SAXParseException exception) throws SAXException {
-		logger.log(Level.ERROR,
+		logger.error(
 				exception.getLineNumber() + ":" + exception.getColumnNumber() + " " + exception.getMessage());
 		throw new SAXException("[Fatal Error] " + exception.getLineNumber() + ":" + exception.getColumnNumber() + " "
 				+ exception.getMessage());

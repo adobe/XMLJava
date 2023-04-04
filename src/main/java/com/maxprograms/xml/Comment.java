@@ -15,27 +15,31 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-public class CData implements XMLNode {
+public class Comment implements XMLNode {
 
-	private static final long serialVersionUID = 610927332260249086L;
+	private static final long serialVersionUID = 4121792990661005580L;
 	private String value;
 
-	public CData(String data) {
-		value = data;
+	protected Comment(String text) {
+		value = text;
 	}
 
-	public String getData() {
+	public String getText() {
 		return value;
+	}
+
+	public void setText(String text) {
+		value = text;
 	}
 
 	@Override
 	public String toString() {
-		return "<![CDATA[" + value + "]]>";
+		return "<!-- " + value + " -->";
 	}
 
 	@Override
 	public short getNodeType() {
-		return XMLNode.CDATA_SECTION_NODE;
+		return COMMENT_NODE;
 	}
 
 	@Override
@@ -43,11 +47,11 @@ public class CData implements XMLNode {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof CData)) {
+		if (!(obj instanceof Comment)) {
 			return false;
 		}
-		CData cd = (CData) obj;
-		return value.equals(cd.getData());
+		Comment c = (Comment) obj;
+		return value.equals(c.getText());
 	}
 
 	@Override

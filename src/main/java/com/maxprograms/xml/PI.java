@@ -15,31 +15,42 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-public class Comment implements XMLNode {
+public class PI implements XMLNode {
 
-	private static final long serialVersionUID = 4121792990661005580L;
-	private String value;
+	private static final long serialVersionUID = -689697302415200547L;
+	private String target;
+	private String data;
 
-	protected Comment(String text) {
-		value = text;
+	public PI(String target, String data) {
+		this.target = target;
+		this.data = data;
 	}
 
-	public String getText() {
-		return value;
+	public String getTarget() {
+		return target;
 	}
 
-	public void setText(String text) {
-		value = text;
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String value) {
+		data = value;
 	}
 
 	@Override
 	public String toString() {
-		return "<!-- " + value + " -->";
+		return "<?" + target + " " + data + "?>";
+	}
+
+	@Override
+	public void writeBytes(OutputStream output, Charset charset) throws IOException {
+		output.write(toString().getBytes(charset));
 	}
 
 	@Override
 	public short getNodeType() {
-		return XMLNode.COMMENT_NODE;
+		return PROCESSING_INSTRUCTION_NODE;
 	}
 
 	@Override
@@ -47,16 +58,11 @@ public class Comment implements XMLNode {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof Comment)) {
+		if (!(obj instanceof PI)) {
 			return false;
 		}
-		Comment c = (Comment) obj;
-		return value.equals(c.getText());
-	}
-
-	@Override
-	public void writeBytes(OutputStream output, Charset charset) throws IOException {
-		output.write(toString().getBytes(charset));
+		PI pi = (PI) obj;
+		return target.equals(pi.getTarget()) && data.equals(pi.getData());
 	}
 
 	@Override

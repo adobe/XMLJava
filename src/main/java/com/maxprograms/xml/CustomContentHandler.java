@@ -11,6 +11,12 @@
  *******************************************************************************/
 package com.maxprograms.xml;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.EmptyStackException;
 import java.util.Hashtable;
@@ -20,13 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
 
 class CustomContentHandler implements IContentHandler {
 
@@ -207,7 +206,6 @@ class CustomContentHandler implements IContentHandler {
 		// do nothing, the entity resolver must support this
 	}
 
-	@Override
 	public void declaration(String version, String encoding, String standalone) throws SAXException {
 		// do nothing
 	}

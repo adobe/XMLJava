@@ -31,7 +31,7 @@ public class DocumentType implements XMLNode {
 
     @Override
     public short getNodeType() {
-        return XMLNode.DOCUMENT_TYPE_NODE;
+        return DOCUMENT_TYPE_NODE;
     }
 
     @Override

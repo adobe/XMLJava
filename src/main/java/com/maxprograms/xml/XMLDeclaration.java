@@ -29,7 +29,7 @@ public class XMLDeclaration implements XMLNode {
 
     @Override
     public short getNodeType() {
-        return XMLNode.XML_DECL_NODE;
+        return XML_DECL_NODE;
     }
 
     @Override

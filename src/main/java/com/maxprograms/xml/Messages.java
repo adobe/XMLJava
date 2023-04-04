@@ -15,7 +15,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class Messages {
-	private static final String BUNDLE_NAME = Messages.class.getPackageName() + ".xmljava";
+	private static final String BUNDLE_NAME = Messages.class.getPackage().toString() + ".xmljava";
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 

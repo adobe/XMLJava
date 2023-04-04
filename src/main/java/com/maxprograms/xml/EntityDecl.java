@@ -25,13 +25,16 @@ public class EntityDecl implements XMLNode {
     private String name;
     private String type;
     private String value;
+
+    private String definingFileAbsolutePath;
     private String publicId;
     private String ndataValue;
     boolean parameterEntity = false;
 
-    public EntityDecl(String declaration) throws IndexOutOfBoundsException{
+    public EntityDecl(String declaration, String definingFileAbsolutePath) throws IndexOutOfBoundsException{
         int i = "<!ENTITY".length();
         char c = declaration.charAt(i);
+        this.definingFileAbsolutePath = definingFileAbsolutePath;
         while (XMLUtils.isXmlSpace(c)) {
             i++;
             c = declaration.charAt(i);
@@ -54,17 +57,17 @@ public class EntityDecl implements XMLNode {
         }
         name = sb.toString();
 
-        String rest = declaration.substring(i, declaration.length() - ">".length()).strip();
+        String rest = declaration.substring(i, declaration.length() - ">".length()).trim();
 
         if (parameterEntity) {
             // it has value or externalId
             if (rest.indexOf(SYSTEM) != -1) {
                 type = SYSTEM;
-                value = rest.substring(rest.indexOf(SYSTEM) + SYSTEM.length()).strip();
+                value = rest.substring(rest.indexOf(SYSTEM) + SYSTEM.length()).trim();
                 value = value.substring(1, value.length() - 1);
             } else if (rest.indexOf(PUBLIC) != -1) {
                 type = PUBLIC;
-                rest = rest.substring(rest.indexOf(PUBLIC) + PUBLIC.length()).strip();
+                rest = rest.substring(rest.indexOf(PUBLIC) + PUBLIC.length()).trim();
                 char delimiter = rest.charAt(0);
                 StringBuilder publicBuilder = new StringBuilder();
                 i = 1;
@@ -75,30 +78,30 @@ public class EntityDecl implements XMLNode {
                     c = rest.charAt(i);
                 }
                 publicId = publicBuilder.toString();
-                rest = rest.substring(publicId.length() + 2).strip();
+                rest = rest.substring(publicId.length() + 2).trim();
                 value = rest.substring(1, rest.length() - 1);
             } else {
                 type = INTERNAL;
-                value = rest.strip();
+                value = rest.trim();
                 value = value.substring(1, value.length() - 1);
             }
         } else {
             // it has value or externalId with NData
             if (rest.indexOf(SYSTEM) != -1) {
                 type = SYSTEM;
-                rest = rest.substring(rest.indexOf(SYSTEM) + SYSTEM.length()).strip();
+                rest = rest.substring(rest.indexOf(SYSTEM) + SYSTEM.length()).trim();
                 if (rest.indexOf(NDATA) == -1) {
                     value = rest;
                     value = value.substring(1, value.length() - 1);
                 } else {
-                    value = rest.substring(0, rest.indexOf(NDATA)).strip();
+                    value = rest.substring(0, rest.indexOf(NDATA)).trim();
                     value = value.substring(1, value.length() - 1);
-                    ndataValue = rest.substring(rest.indexOf(NDATA) + NDATA.length()).strip();
+                    ndataValue = rest.substring(rest.indexOf(NDATA) + NDATA.length()).trim();
                 }
             } else if (rest.indexOf(PUBLIC) != -1) {
                 type = PUBLIC;
-                rest = rest.substring(PUBLIC.length()).strip();
-                rest = rest.substring(PUBLIC.length()).strip();
+                rest = rest.substring(PUBLIC.length()).trim();
+                rest = rest.substring(PUBLIC.length()).trim();
                 char delimiter = rest.charAt(0);
                 StringBuilder publicBuilder = new StringBuilder();
                 i = 1;
@@ -112,13 +115,13 @@ public class EntityDecl implements XMLNode {
                 if (rest.indexOf(NDATA) == -1) {
                     value = rest;
                 } else {
-                    value = rest.substring(publicId.length() + 2, rest.indexOf(NDATA)).strip();
+                    value = rest.substring(publicId.length() + 2, rest.indexOf(NDATA)).trim();
                     value = value.substring(1, value.length() - 1);
-                    ndataValue = rest.substring(rest.indexOf(NDATA) + NDATA.length()).strip();
+                    ndataValue = rest.substring(rest.indexOf(NDATA) + NDATA.length()).trim();
                 }
             } else {
                 type = INTERNAL;
-                value = rest.strip();
+                value = rest.trim();
                 value = value.substring(1, value.length() - 1);
             }
         }
@@ -207,5 +210,9 @@ public class EntityDecl implements XMLNode {
     @Override
     public void writeBytes(OutputStream output, Charset charset) throws IOException {
         output.write(toString().getBytes(charset));
+    }
+
+    public String getDefiningFileAbsolutePath() {
+        return definingFileAbsolutePath;
     }
 }
